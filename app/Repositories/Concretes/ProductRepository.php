@@ -10,12 +10,12 @@ class ProductRepository implements ProductInterface
     public function create($request)
     {
         //create product using request parameters
-        Product::create([
+        $product = Product::create([
             'name' => $request->name,
             'stock' => $request->stock,
             'price' => $request->price
         ]);
 
-        return 0;
+        return $product;
     }
 }
