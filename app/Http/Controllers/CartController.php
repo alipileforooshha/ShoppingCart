@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Chains\ProductSale\InvalidPrice;
 use App\Chains\ProductSale\SufficentStock;
 use App\Http\Requests\EditCartRequest;
+use App\Http\Resources\CartResource;
 use App\Repositories\Interfaces\CartInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
@@ -28,7 +29,8 @@ class CartController extends Controller
     {
         try{
             $cart = $this->cartInterface->index();
-            return Response::success(200, $cart, 'سبد خرید با موفقیت بازگردانده شد');
+            $result = CartResource::collection($cart);
+            return Response::success(200, $result, 'سبد خرید با موفقیت بازگردانده شد');
         }catch(\Throwable $e)
         {
             return Response::failed(422, $cart, 'در بازگردانی سبد خرید مشکلی پیش آمده است');

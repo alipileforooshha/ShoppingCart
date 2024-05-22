@@ -17,9 +17,10 @@ class CartRepository implements CartInterface
     public function index()
     {
         $cacheDuration = 60 * 24 * 7;
-        return Cache::remember('cart:userId',$cacheDuration,function(){
+        $cart = Cache::remember('cart:userId',$cacheDuration,function(){
             return Cart::with('Product')->get();
         });
+        return $cart;
     }
 
     /*

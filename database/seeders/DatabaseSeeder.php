@@ -13,11 +13,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        //make 10 normal users
-        User::factory(10)->create([
-            'type' => 0
-        ]);
-
         //make 1 manager
         User::factory(1)->create([
             'type' => 1,

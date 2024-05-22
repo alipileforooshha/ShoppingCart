@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateProductRequest;
+use App\Http\Resources\ProductResource;
 use App\Jobs\SendProductCreateEmailJob;
 use App\Repositories\Interfaces\ProductInterface;
 use Illuminate\Http\Request;
@@ -18,6 +19,21 @@ class ProductController extends Controller
     public function __construct(ProductInterface $productInterface)
     {
         $this->productInterface = $productInterface;    
+    }
+
+    /*
+    * Return a list of all products
+    */
+    public function index()
+    {
+        try{
+            $products = $this->productInterface->index();
+            $result = ProductResource::collection($products);
+            return Response::success(200,$result, 'لیست تمام محصولات با موفقیت بازگردانی شد');
+        }catch(\Throwable $e)
+        {
+            return Response::failed(403,null,'در بازگردانی لیست محصولات مشکلی پیش آمده است');
+        }
     }
 
     /*
