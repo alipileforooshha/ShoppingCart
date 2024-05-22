@@ -22,6 +22,7 @@ class SendProductCreateEmailJob implements ShouldQueue
     public function __construct($product)
     {
         $this->product = $product;
+        // Find the manager by querying the user's table and the type is 1
         $this->managerEmail = User::where('type',1)->first()->email;
     }
 

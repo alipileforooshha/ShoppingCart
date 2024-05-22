@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Chains\ProductSale\InvalidPrice;
+use App\Chains\ProductSale\SufficentStock;
 use App\Http\Requests\EditCartRequest;
 use App\Repositories\Interfaces\CartInterface;
 use Illuminate\Http\Request;
@@ -11,11 +13,17 @@ class CartController extends Controller
 {
     private $cartInterface;
 
+    /*
+    * Inject CartInterface as dependency
+    */
     public function __construct(CartInterface $cartInterface)
     {
         $this->cartInterface = $cartInterface;
     }
 
+    /*
+    * Returns user's Shopping Cart
+    */
     public function index()
     {
         try{
@@ -27,6 +35,10 @@ class CartController extends Controller
         }
     }
 
+    /*
+    * Adds an Item to the user's ShoppingCart if Product already exists
+    * adds one to the count
+    */
     public function add(EditCartRequest $request)
     {
         try{
@@ -38,6 +50,11 @@ class CartController extends Controller
         }
     }
     
+    /*
+    * Removes an Item from the user's ShoppingCart if Product count is 
+    * more than one decrements the count by 1 if count is 1 removes the product
+    * from the Cart
+    */
     public function remove(EditCartRequest $request)
     {
         try{
@@ -46,6 +63,24 @@ class CartController extends Controller
         }catch(\Throwable $e)
         {
             return Response::failed(403,null,'ویرایش سبد خرید با مشکل مواجه شد');
+        }
+    }
+
+    /*
+    * Checksout the user's shopping cart after validating conditions
+    */
+    public function checkout()
+    {
+        $sufficentStock = new SufficentStock($this->cartInterface);
+        $invalidPrice = new InvalidPrice($this->cartInterface);
+        $sufficentStock->setSuccesor($invalidPrice);
+        $this->cartInterface->checkout();
+        try{
+            $sufficentStock->handle();
+            return Response::success(200,null,'تراکنش با موفقیت انجام شد');  
+        }catch(\Throwable $e)
+        {
+            return Response::failed(403,null,$e->getMessage());
         }
     }
 }

@@ -18,3 +18,5 @@ Route::prefix('carts')->group(function () {
     Route::post('/add',[CartController::class, 'add'])->name('carts.add');  
     Route::post('/remove',[CartController::class, 'remove'])->name('carts.remove');  
 });
+
+Route::get('checkout',[CartController::class, 'checkout'])->name('checkout');

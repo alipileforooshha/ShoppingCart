@@ -10,14 +10,21 @@ use Illuminate\Support\Facades\Cache;
 
 class CartRepository implements CartInterface 
 {
+    
+    /*
+    * Returns all the records and also caches the query for a week 
+    */
     public function index()
     {
         $cacheDuration = 60 * 24 * 7;
         return Cache::remember('cart:userId',$cacheDuration,function(){
-            return Cart::all();
+            return Cart::with('Product')->get();
         });
     }
 
+    /*
+    * Adds an item to the cart and if it already exists increments the count by * 1 
+    */
     public function addToCart($request)
     {
         Cache::forget('cart:userId');
@@ -36,6 +43,10 @@ class CartRepository implements CartInterface
         }
     }
     
+    /*
+    * Removes an item from the cart and if count is more  
+    * than 1 decrements it the count by 1  
+    */
     public function removeFromCart($request)
     {
         Cache::forget('cart:userId');
@@ -55,5 +66,11 @@ class CartRepository implements CartInterface
             throw new ModelNotFoundException('سبد خریدی با این آیدی پیدا نشد');
         }
         return 0;
+    }
+
+    public function checkout()
+    {
+        Cart::truncate();
+        return;
     }
 }

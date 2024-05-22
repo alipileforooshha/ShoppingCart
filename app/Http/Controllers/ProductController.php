@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateProductRequest;
 use App\Jobs\SendProductCreateEmailJob;
-use App\Models\Product;
 use App\Repositories\Interfaces\ProductInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
@@ -12,12 +11,18 @@ use Illuminate\Support\Facades\Response;
 class ProductController extends Controller
 {
     private $productInterface;
-
+    
+    /*
+    * Inject ProductInterface as dependency
+    */
     public function __construct(ProductInterface $productInterface)
     {
         $this->productInterface = $productInterface;    
     }
 
+    /*
+    * Create a new product and send an email to the manager
+    */
     public function create(CreateProductRequest $request)
     {
         

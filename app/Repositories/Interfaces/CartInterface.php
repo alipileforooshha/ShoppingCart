@@ -6,4 +6,5 @@ interface CartInterface {
     public function index();
     public function addToCart($request);
     public function removeFromCart($request);
+    public function checkout();
 }
