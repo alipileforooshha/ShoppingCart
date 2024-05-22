@@ -2,24 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Chains\ProductSale\CartFull;
 use App\Chains\ProductSale\InvalidPrice;
 use App\Chains\ProductSale\SufficentStock;
 use App\Http\Requests\EditCartRequest;
 use App\Http\Resources\CartResource;
 use App\Repositories\Interfaces\CartInterface;
+use App\Repositories\Interfaces\ProductInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Response;
 
 class CartController extends Controller
 {
     private $cartInterface;
+    private $productInterface;
 
     /*
     * Inject CartInterface as dependency
     */
-    public function __construct(CartInterface $cartInterface)
+    public function __construct(CartInterface $cartInterface,
+    ProductInterface $productInterface)
     {
         $this->cartInterface = $cartInterface;
+        $this->productInterface = $productInterface;
     }
 
     /*
@@ -73,16 +79,19 @@ class CartController extends Controller
     */
     public function checkout()
     {
-        $sufficentStock = new SufficentStock($this->cartInterface);
+        $sufficentStock = new SufficentStock($this->cartInterface, $this->productInterface);
         $invalidPrice = new InvalidPrice($this->cartInterface);
-        $sufficentStock->setSuccesor($invalidPrice);
-        $this->cartInterface->checkout();
+        $cartFull = new CartFull($this->cartInterface);
+        $invalidPrice->setSuccesor($cartFull);
+        $cartFull->setSuccesor($sufficentStock);
+
         try{
-            $sufficentStock->handle();
+            $invalidPrice->handle();
+            $this->cartInterface->checkout();
             return Response::success(200,null,'تراکنش با موفقیت انجام شد');  
         }catch(\Throwable $e)
         {
-            return Response::failed(403,null,$e->getMessage());
+            return Response::failed(406,null,$e->getMessage());
         }
     }
 }

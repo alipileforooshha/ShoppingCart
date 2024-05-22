@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
         //make 1 manager
         User::factory(1)->create([
             'type' => 1,
-            'email' => 'micahelwwww@gmail.com'
+            'email' => 'micahelwwww@gmail.com' //replace with your desired email
         ]);
     }
 }

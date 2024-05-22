@@ -24,7 +24,7 @@ class CreateProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required',
+            'name' => 'required | unique:products,name',
             'stock' => 'required | numeric',
             'price' => 'required | numeric | min : 0'
         ];
@@ -34,6 +34,7 @@ class CreateProductRequest extends FormRequest
     {
         return [
             'name.required' => 'وارد کردن نام محصول الزامی است',
+            'name.unique' => 'نام محصول نمیتواند تکراری باشد',
             'price.required' => 'وارد کردن قیمت محصول الزامی است',
             'price.numeric' => 'قیمت محصول باید عددی باشد',
             'price.min' => 'قیمت محصول نمیتواند منفی باشد',

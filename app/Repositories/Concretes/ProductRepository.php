@@ -13,10 +13,7 @@ class ProductRepository implements ProductInterface
     */
     public function index()
     {
-        $cacheDuration = 60 * 24 * 7;
-        $products = Cache::remember('products',$cacheDuration,function(){
-            return Product::all();
-        });
+        $products = Product::all();
         return $products;
     }
 
@@ -35,5 +32,12 @@ class ProductRepository implements ProductInterface
         ]);
 
         return $product;
+    }
+
+    public function decrementStock($id, $count)
+    {
+        $product = Product::findOrFail($id);
+        $product->stock = $product->stock - $count;
+        $product->save();
     }
 }

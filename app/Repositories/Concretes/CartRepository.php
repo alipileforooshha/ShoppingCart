@@ -68,9 +68,10 @@ class CartRepository implements CartInterface
         }
         return 0;
     }
-
+    
     public function checkout()
     {
+        Cache::forget('cart:userId');
         Cart::truncate();
         return;
     }
